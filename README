@@ -1,0 +1,14 @@
+ActsAsImageHolder
+=================
+
+This plugin handles the work with image-fields, such as validation,
+resizing, files organizations etc.
+
+
+Example
+=======
+
+Example goes here.
+
+
+Copyright (c) 2008 Nikolay V. Nemshilov, released under the MIT license
