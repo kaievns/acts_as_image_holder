@@ -13,14 +13,18 @@ unless defined? ActsAsImageHolder
 
 end
 
+RAILS_ROOT = '' unless defined? RAILS_ROOT
+
+  
 # configuration of the test database environoment
-$db_file = File.dirname(__FILE__)+"/db/test.sqlite3"
-unless ActiveRecord::Base.connected?
+unless defined? $db_file
+  $db_file = File.dirname(__FILE__)+"/db/test.sqlite3"
   ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => $db_file)
 end
 
+
 # run mibrations
 unless File.exists?($db_file)
-  require File.dirname(__FILE__)+"/db/migrate/create_images.rb"
-  CreateImagesTable.migrate(:up)
+  require File.dirname(__FILE__)+"/db/migrate/create_blobbed_images.rb"
+  CreateBlobbedImagesTable.migrate(:up)
 end

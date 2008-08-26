@@ -13,8 +13,17 @@ module ActsAsImageHolder
     #
     # define validators
     #
+    # required fields direct validation
     options.fields.each do |field|
-      
+      validates_presence_of field.image_field if field.required
+    end
+    
+    # the other fields common validation
+    validates_each options.fields.collect(&:image_field) do |record, attr, value|
+      if @__acts_as_image_holder_problems
+        record.errors.add attr, "is not an image" if @__acts_as_image_holder_problems[attr] == :not_an_image
+        record.errors.add attr, "has wrong type"  if @__acts_as_image_holder_problems[attr] == :wrong_type
+      end
     end
     
     #
@@ -25,23 +34,21 @@ module ActsAsImageHolder
         @__acts_as_image_holder_problems ||= { }
         @__acts_as_image_holder_filedata ||= { }
         
-        # check if the file is an image file
-        if file.respond_to?(:content_type) and file.content_type[0,5] == 'image'
+        begin
+          # reading and converting the file
+          filedata = ImageProc.prepare_data(file, field)
+          thmbdata = ImageProc.create_thmb(file, field) if field.thmb_field
+          
           # check if the file has a right type
           if !field.allowed_types or field.allowed_types.include? ImageProc.get_type(file)
-            
-            # trying to save the content
-            filedata = ImageProc.prepare_data(file, field)
-            thmbdata = ImageProc.create_thmb(file, field) if field.thmb_field
-            
             if options.output_directory
               # save the data for the future file-writting
               @__acts_as_image_holder_filedata[field.image_field] = filedata
               @__acts_as_image_holder_filedata[field.thmb_field]  = thmbdata if field.thmb_field
               
               # presetting the filenames for the future files
-              self[field.image_field] = FileProc.guess_file_name(options, field, file)
-              self[field.thmb_field]  = FileProc.guess_thmb_file_name(options, field, file) if field.thmb_field
+              self[field.image_field] = FileProc.guess_file_name(options, file)
+              self[field.thmb_field]  = FileProc.guess_thmb_file_name(options, file) if field.thmb_field
               
             else
               # blobs direct assignment
@@ -51,9 +58,12 @@ module ActsAsImageHolder
             
             self[field.image_type_field] = "#{ImageProc.get_type(file)}" if field.image_type_field
             
-          else @__acts_as_image_holder_problems[field.image_field] = 'wrong type'
+          else
+            @__acts_as_image_holder_problems[field.image_field] = :wrong_type
           end
-        else @__acts_as_image_holder_problems[field.image_field] = 'not an image'
+          
+        rescue Magick::ImageMagickError
+          @__acts_as_image_holder_problems[field.image_field] = :not_an_image
         end
       end
     end
@@ -109,5 +119,26 @@ module ActsAsImageHolder
         end
       end
     end
+    
+    #
+    # Some additional useful images handling methods
+    #
+    # Resize a file and a blob-string
+    #
+    # @param file - File object or a string file-path
+    # @param size - [width, height] array or a "widthxheight" string
+    # @param format - "gif", "jpeg", "png", or nil to keep the same
+    # @param quality - jpeg - quality 0 - 100, nil to keep the same
+    #
+    module_eval <<-"end_eval"
+      def resize_file(file, size, format=nil, quality=nil)
+        file = File.open(file) if file.is_a? String
+        ImageProc.resize(file, size, format, quality)
+      end
+      
+      def resize_blob(blob, size, format=nil, quality=nil)
+        ImageProc.resize(blob, size, format, quality)
+      end
+    end_eval
   end 
 end

@@ -142,8 +142,6 @@ describe ActsAsImageHolder::Options do
     
     describe "relative path" do 
       before :each do 
-        RAILS_ROOT = 'RAILS_ROOT' unless defined? RAILS_ROOT
-        
         @o = ActsAsImageHolder::Options.new(:output_directory => 'uploads')
       end
       
