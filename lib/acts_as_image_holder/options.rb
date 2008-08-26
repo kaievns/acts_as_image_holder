@@ -40,8 +40,8 @@ protected
   # describes an image field options
   #
   class Field
-    OPTIONS = %w{image_field image_type_field resize_to convert_to required allowed_types
-                 maximum_bytes jpeg_quality thmb_field thmb_size}.collect(&:to_sym)
+    OPTIONS = %w{image_field image_type_field resize_to convert_to required allowed_types quality
+                 maximum_bytes jpeg_quality thmb_field thmb_size thmb_quality}.collect(&:to_sym)
     
     def initialize(options)
       @options = {}
@@ -52,6 +52,9 @@ protected
       
       @options[:resize_to] = parse_size(@options[:resize_to])
       @options[:thmb_size] = parse_size(@options[:thmb_size])
+      
+      @options[:thmb_type] = parse_type(@options[:thmb_type])
+      @options[:thmb_type] ||= :jpeg
       
       @options[:convert_to] = parse_type(@options[:convert_to])
       @options[:allowed_types] = @options[:allowed_types].collect{ |t| parse_type(t)} if @options[:allowed_types]

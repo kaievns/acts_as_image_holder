@@ -1,6 +1,8 @@
 #
 # this class handles the work with the files
 #
+# Copyright (C) by Nikolay V. Nemshilov aka St.
+#
 class ActsAsImageHolder::FileProc
   class << self
     # guesses the name for the file
