@@ -22,26 +22,14 @@ class ActsAsImageHolder::ImageProc
     
     # gets the image type
     def get_type(file)
-      if file.is_a? String
-        image = Magick::Image.from_blob(file).first
-      else
-        file.rewind
-        image = Magick::Image.read(file).first
-      end
-      
-      image.format.downcase.to_sym
+      image_from(file).format.downcase.to_sym
     end
     
     # resizes the given file
     def resize(file, size, format=nil, quality=nil)
       size = size.split('x').collect{ |v| v.to_i} if size.is_a? String
       
-      if file.is_a? String
-        image = Magick::Image.from_blob(file).first
-      else
-        file.rewind
-        image = Magick::Image.read(file).first
-      end
+      image = image_from(file)
       
       image.quality = quality if quality
       
@@ -49,6 +37,18 @@ class ActsAsImageHolder::ImageProc
       image.format = format.to_s if format
       
       image
+    end
+    
+  private
+    # converts the source into an image object
+    def image_from(src)
+      if src.is_a? String
+        Magick::Image.from_blob(src).first
+        
+      else # <- assumed a file pointer
+        src.rewind
+        Magick::Image.read(src).first
+      end
     end
   end
 end
