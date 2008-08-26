@@ -31,10 +31,9 @@ class ActsAsImageHolder::ImageProc
       
       image = image_from(file)
       
-      image.quality = quality if quality
-      
+      image.quality = quality               if quality
       image.resize_to_fit! size[0], size[1] if size
-      image.format = format.to_s if format
+      image.format = format.to_s            if format
       
       image
     end
