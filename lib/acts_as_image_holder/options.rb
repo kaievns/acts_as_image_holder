@@ -31,6 +31,7 @@ protected
     if options[:output_directory]
       @output_directory = options[:output_directory]
       @output_directory = "#{RAILS_ROOT}/public/images/#{@output_directory}" if @output_directory[0,1] != '/'
+      @output_directory = @output_directory[0, @output_directory.size-1] if @output_directory[@output_directory.size-1,1] == '/'
       
       @subdirectories = options[:subdirectories] if options[:subdirectories]
     end
