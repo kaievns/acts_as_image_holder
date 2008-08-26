@@ -43,4 +43,10 @@ describe ActsAsImageHolder::ImageProc do
       @image.rows.should == 30
     end
   end
+  
+  describe "get_type" do 
+    it "should recognize the jpeg type" do 
+      ActsAsImageHolder::ImageProc.get_type(@file).should == :jpeg
+    end
+  end
 end

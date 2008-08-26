@@ -13,16 +13,15 @@ module ActsAsImageHolder
     #
     # define validators
     #
-    # required fields direct validation
-    options.fields.each do |field|
-      validates_presence_of field.image_field if field.required
-    end
-    
-    # the other fields common validation
     validates_each options.fields.collect(&:image_field) do |record, attr, value|
-      if @__acts_as_image_holder_problems
-        record.errors.add attr, "is not an image" if @__acts_as_image_holder_problems[attr] == :not_an_image
-        record.errors.add attr, "has wrong type"  if @__acts_as_image_holder_problems[attr] == :wrong_type
+      record.instance_eval do 
+        if @__acts_as_image_holder_problems
+          record.errors.add attr, "is not an image" if @__acts_as_image_holder_problems[attr] == :not_an_image
+          record.errors.add attr, "has wrong type"  if @__acts_as_image_holder_problems[attr] == :wrong_type
+        
+        elsif options.fields.find{ |f| f.image_field == attr}.required
+          record.errors.add attr, "is required"
+        end
       end
     end
     
@@ -56,7 +55,7 @@ module ActsAsImageHolder
               self[field.thmb_field]  = thmbdata if field.thmb_field
             end
             
-            self[field.image_type_field] = "#{ImageProc.get_type(file)}" if field.image_type_field
+            self[field.image_type_field] = "#{ImageProc.get_type(filedata)}" if field.image_type_field
             
           else
             @__acts_as_image_holder_problems[field.image_field] = :wrong_type

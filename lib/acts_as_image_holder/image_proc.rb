@@ -22,7 +22,14 @@ class ActsAsImageHolder::ImageProc
     
     # gets the image type
     def get_type(file)
-      Magic::Image.read(file).first.format.downcase.to_sym
+      if file.is_a? String
+        image = Magick::Image.from_blob(file).first
+      else
+        file.rewind
+        image = Magick::Image.read(file).first
+      end
+      
+      image.format.downcase.to_sym
     end
     
     # resizes the given file
@@ -32,6 +39,7 @@ class ActsAsImageHolder::ImageProc
       if file.is_a? String
         image = Magick::Image.from_blob(file).first
       else
+        file.rewind
         image = Magick::Image.read(file).first
       end
       
