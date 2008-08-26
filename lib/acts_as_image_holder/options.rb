@@ -40,7 +40,7 @@ protected
   # describes an image field options
   #
   class Field
-    OPTIONS = %w{image_field image_type_field resize_to convert_to allowed_types
+    OPTIONS = %w{image_field image_type_field resize_to convert_to required allowed_types
                  maximum_bytes jpeg_quality thmb_field thmb_size}.collect(&:to_sym)
     
     def initialize(options)
