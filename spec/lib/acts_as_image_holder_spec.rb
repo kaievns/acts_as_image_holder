@@ -6,7 +6,7 @@ class BlobbedImage < ActiveRecord::Base
                        :resize_to => '200x200',
                        :convert_to => :png,
                        :allowed_types => [:jpeg, :png],
-                       :thmb_field => 'image_thmb'
+                       :thumb_field => 'image_thumb'
 end
 
 class ImageWithFile < ActiveRecord::Base
@@ -15,9 +15,9 @@ class ImageWithFile < ActiveRecord::Base
                        :resize_to => '200x200',
                        :convert_to => :png,
                        :allowed_types => [:jpeg, :png],
-                       :thmb_field => 'image_thmb_file',
-                       :thmb_type => :gif,
-                       :thmb_size => '40x40',
+                       :thumb_field => 'image_thumb_file',
+                       :thumb_type => :gif,
+                       :thumb_size => '40x40',
                        :output_directory => '/tmp/images_test'
 end
 
@@ -76,7 +76,7 @@ describe ActsAsImageHolder do
       end
       
       it "should generate the thumbnail" do 
-        @image.image_thmb.should_not be_nil
+        @image.image_thumb.should_not be_nil
       end
     end
   end
@@ -150,8 +150,8 @@ describe ActsAsImageHolder do
         @image.image_type.should == 'png'
       end
       
-      it "should have assigned the thmb file-name" do 
-        @image.image_thmb_file.should == 'test-thmb.gif'
+      it "should have assigned the thumb file-name" do 
+        @image.image_thumb_file.should == 'test-thumb.gif'
       end
       
       it "should not write the files yet" do 
@@ -171,8 +171,8 @@ describe ActsAsImageHolder do
           File.should be_exists("#{ImageWithFile::FILES_DIRECTORY}/test.png")
         end
         
-        it "should create the thmb file" do 
-          File.should be_exists("#{ImageWithFile::FILES_DIRECTORY}/test-thmb.gif")
+        it "should create the thumb file" do 
+          File.should be_exists("#{ImageWithFile::FILES_DIRECTORY}/test-thumb.gif")
         end
         
         describe "image-file" do 
@@ -192,7 +192,7 @@ describe ActsAsImageHolder do
         
         describe "thumb-file" do 
           before :each do 
-            @image = Magick::Image.read("#{ImageWithFile::FILES_DIRECTORY}/test-thmb.gif").first
+            @image = Magick::Image.read("#{ImageWithFile::FILES_DIRECTORY}/test-thumb.gif").first
           end
           
           it "should be a gif image" do 
@@ -214,8 +214,8 @@ describe ActsAsImageHolder do
             File.should_not be_exists("#{ImageWithFile::FILES_DIRECTORY}/test.png")
           end
           
-          it "should remove the thmb file" do 
-            File.should_not be_exists("#{ImageWithFile::FILES_DIRECTORY}/test-thmb.gif")
+          it "should remove the thumb file" do 
+            File.should_not be_exists("#{ImageWithFile::FILES_DIRECTORY}/test-thumb.gif")
           end
         end
       end

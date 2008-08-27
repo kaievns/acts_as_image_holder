@@ -5,7 +5,7 @@ class CreateImageWithFilesTable < ActiveRecord::Migration
     create_table "image_with_files", :force => true do |t|
       t.binary :image_file
       t.binary :image_type
-      t.binary :image_thmb_file
+      t.binary :image_thumb_file
     end
   end
   

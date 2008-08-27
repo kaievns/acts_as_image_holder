@@ -3,7 +3,7 @@ require File.dirname(__FILE__)+"/../../spec_helper"
 describe ActsAsImageHolder::ImageProc do 
   before :each do 
     @file = File.open(File.dirname(__FILE__)+"/../../images/test.jpg", "rb")
-    @field = ActsAsImageHolder::Options.new(:resize_to => '200x200', :thmb_size => '40x40',
+    @field = ActsAsImageHolder::Options.new(:resize_to => '200x200', :thumb_size => '40x40',
                                             :convert_to => :png).fields.first
   end
   
@@ -27,9 +27,9 @@ describe ActsAsImageHolder::ImageProc do
     end
   end
   
-  describe "create_thmb" do 
+  describe "create_thumb" do 
     before :each do 
-      @data = ActsAsImageHolder::ImageProc.create_thmb(@file, @field)
+      @data = ActsAsImageHolder::ImageProc.create_thumb(@file, @field)
       @image = Magick::Image.from_blob(@data).first
     end
     

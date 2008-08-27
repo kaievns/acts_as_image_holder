@@ -36,23 +36,23 @@ module ActsAsImageHolder
         begin
           # reading and converting the file
           filedata = ImageProc.prepare_data(file, field)
-          thmbdata = ImageProc.create_thmb(file, field) if field.thmb_field
+          thumbdata = ImageProc.create_thumb(file, field) if field.thumb_field
           
           # check if the file has a right type
           if !field.allowed_types or field.allowed_types.include? ImageProc.get_type(file)
             if options.output_directory
               # save the data for the future file-writting
               @__acts_as_image_holder_filedata[field.image_field] = filedata
-              @__acts_as_image_holder_filedata[field.thmb_field]  = thmbdata if field.thmb_field
+              @__acts_as_image_holder_filedata[field.thumb_field]  = thumbdata if field.thumb_field
               
               # presetting the filenames for the future files
               self[field.image_field] = FileProc.guess_file_name(options, file, field)
-              self[field.thmb_field]  = FileProc.guess_thmb_file_name(options, file, field) if field.thmb_field
+              self[field.thumb_field]  = FileProc.guess_thumb_file_name(options, file, field) if field.thumb_field
               
             else
               # blobs direct assignment
               self[field.image_field] = filedata
-              self[field.thmb_field]  = thmbdata if field.thmb_field
+              self[field.thumb_field]  = thumbdata if field.thumb_field
             end
             
             self[field.image_type_field] = "#{ImageProc.get_type(filedata)}" if field.image_type_field
@@ -82,9 +82,9 @@ module ActsAsImageHolder
           __file_url_for self[field.image_field] if self[field.image_field]
         end
         
-        if field.thmb_field
-          define_method "#{field.thmb_field}_url" do 
-            __file_url_for self[field.thmb_field] if self[field.thmb_field]
+        if field.thumb_field
+          define_method "#{field.thumb_field}_url" do 
+            __file_url_for self[field.thumb_field] if self[field.thumb_field]
           end
         end
       end
@@ -117,7 +117,7 @@ module ActsAsImageHolder
       define_method :acts_as_image_holder_remove_files do 
         options.fields.each do |field|
           FileProc.remove_file(options, self[field.image_field])
-          FileProc.remove_file(options, self[field.thmb_field]) if field.thmb_field
+          FileProc.remove_file(options, self[field.thumb_field]) if field.thumb_field
         end
       end
     end

@@ -14,11 +14,11 @@ class ActsAsImageHolder::FileProc
       safe_file_name options, file_name
     end
     
-    # guesses the thmb-filename
-    def guess_thmb_file_name(options, file, field=nil)
+    # guesses the thumb-filename
+    def guess_thumb_file_name(options, file, field=nil)
       file_name = file.respond_to?(:original_filename) ? file.original_filename : File.basename(file.path)
-      file_name = file_name[0, file_name.rindex('.')]+"-thmb"+file_name[file_name.rindex('.'), file_name.size]
-      file_name = file_name[0, file_name.rindex('.')]+".#{field.thmb_type}" if field and field.thmb_type
+      file_name = file_name[0, file_name.rindex('.')]+"-thumb"+file_name[file_name.rindex('.'), file_name.size]
+      file_name = file_name[0, file_name.rindex('.')]+".#{field.thumb_type}" if field and field.thumb_type
       
       safe_file_name options, file_name
     end

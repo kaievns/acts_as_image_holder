@@ -14,10 +14,10 @@ class ActsAsImageHolder::ImageProc
     end
     
     #
-    # creates a thmbnail of the image-file
+    # creates a thumbnail of the image-file
     #
-    def create_thmb(file, field)
-      resize(file, field.thmb_size, field.thmb_type, field.thmb_quality).to_blob
+    def create_thumb(file, field)
+      resize(file, field.thumb_size, field.thumb_type, field.thumb_quality).to_blob
     end
     
     # gets the image type

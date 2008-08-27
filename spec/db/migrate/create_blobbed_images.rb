@@ -5,7 +5,7 @@ class CreateBlobbedImagesTable < ActiveRecord::Migration
     create_table "blobbed_images", :force => true do |t|
       t.binary :image
       t.binary :image_type
-      t.binary :image_thmb
+      t.binary :image_thumb
     end
   end
   

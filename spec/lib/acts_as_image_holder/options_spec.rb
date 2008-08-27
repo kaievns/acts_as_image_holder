@@ -21,7 +21,7 @@ describe ActsAsImageHolder::Options do
       
       it "should have not set the other fields" do 
         %w{image_type_field resize_to convert_to allowed_types maximum_bytes 
-           jpeg_quality thmb_field thmb_size}.each do |name|
+           jpeg_quality thumb_field thumb_size}.each do |name|
           
           @f.send(name).should be_nil
         end
@@ -40,8 +40,8 @@ describe ActsAsImageHolder::Options do
                                             :maximum_bytes => 2.kilobytes,
                                             :jpeg_quality => 90,
                                             
-                                            :thmb_field => 'my_field_thmb',
-                                            :thmb_size => '40x30'
+                                            :thumb_field => 'my_field_thumb',
+                                            :thumb_size => '40x30'
                                           })
     end
     
@@ -83,11 +83,11 @@ describe ActsAsImageHolder::Options do
       end
       
       it do 
-        @f.thmb_field.should == 'my_field_thmb'
+        @f.thumb_field.should == 'my_field_thumb'
       end
       
       it do 
-        @f.thmb_size.should == [40, 30]
+        @f.thumb_size.should == [40, 30]
       end
     end
   end

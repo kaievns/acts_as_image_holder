@@ -67,11 +67,11 @@ describe ActsAsImageHolder::FileProc do
     end
   end
   
-  describe "thmb file-name guess" do 
+  describe "thumb file-name guess" do 
     before :each do 
       FileUtils.rm_rf @options.output_directory
       
-      @file_name = ActsAsImageHolder::FileProc.guess_thmb_file_name @options, @file
+      @file_name = ActsAsImageHolder::FileProc.guess_thumb_file_name @options, @file
     end
     
     it 'should be a string' do 
@@ -79,7 +79,7 @@ describe ActsAsImageHolder::FileProc do
     end
     
     it "should be similar to the original file name" do 
-      @file_name.split('/').last.should == 'test-thmb.jpg'
+      @file_name.split('/').last.should == 'test-thumb.jpg'
     end
   end
 end

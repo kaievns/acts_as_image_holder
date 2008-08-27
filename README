@@ -21,10 +21,10 @@ end
 
 
 More complex example, this time there are two blob-fields one 'image'
-will keep the image source, the second 'thmb', will contain the image
+will keep the image source, the second 'thumb', will contain the image
 thumbnail. All the incomming images will be resized to fit the size of
 600x400, the system will check that they are in type of gif, png or
-jpeg and then will automatically generate a thmbnail which will fit
+jpeg and then will automatically generate a thumbnail which will fit
 the size of 200x150 and will be in format of jpeg. 
 
 
@@ -32,9 +32,9 @@ class Image < ActiveRecord::Base
   acts_as_image_holder :image_field => 'image',
                        :resize_to => '600x400',
                        :allowed_types => [:gif, :png, :jpeg],
-                       :thmb_field => 'thmb',
-                       :thmb_size => '200x150',
-                       :thmb_type => :jpeg
+                       :thumb_field => 'thumb',
+                       :thumb_size => '200x150',
+                       :thumb_type => :jpeg
 end
 
 Each time there will be defined methods to direct assignment the
@@ -102,18 +102,18 @@ You can pass to the method the following options.
 
 
 [*] Thumbnailing options
-   :thmb_field  - the name of the field which will contain the thmb
-                  file name or the thmb-blob. if specified the thmbs
+   :thumb_field  - the name of the field which will contain the thumb
+                  file name or the thumb-blob. if specified the thumbs
                   will be generated automatically each time the main
                   image field assigned
 
-   :thmb_size   - string like '123x123' which meant as width-height,
-                  if specified thmbs will be created to fit the size
+   :thumb_size   - string like '123x123' which meant as width-height,
+                  if specified thumbs will be created to fit the size
 
-   :thmb_type   - :png/:gif/:jpeg - if specified all the thumbs will
+   :thumb_type   - :png/:gif/:jpeg - if specified all the thumbs will
                   be created in the given type
 
-   :thmb_quality - the jpeg-thumbnails quality
+   :thumb_quality - the jpeg-thumbnails quality
    
 
 
