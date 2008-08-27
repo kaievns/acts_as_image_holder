@@ -42,7 +42,7 @@ protected
   #
   class Field
     OPTIONS = %w{image_field image_type_field resize_to convert_to required allowed_types quality
-                 maximum_bytes jpeg_quality thmb_field thmb_size thmb_quality}.collect(&:to_sym)
+                 maximum_bytes jpeg_quality thmb_field thmb_size thmb_quality thmb_type}.collect(&:to_sym)
     
     def initialize(options)
       @options = {}

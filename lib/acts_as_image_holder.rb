@@ -16,11 +16,11 @@ module ActsAsImageHolder
     validates_each options.fields.collect(&:image_field) do |record, attr, value|
       record.instance_eval do 
         if @__acts_as_image_holder_problems
-          record.errors.add attr, "is not an image" if @__acts_as_image_holder_problems[attr] == :not_an_image
-          record.errors.add attr, "has wrong type"  if @__acts_as_image_holder_problems[attr] == :wrong_type
+          self.errors.add attr, "is not an image" if @__acts_as_image_holder_problems[attr] == :not_an_image
+          self.errors.add attr, "has wrong type"  if @__acts_as_image_holder_problems[attr] == :wrong_type
         
         elsif options.fields.find{ |f| f.image_field == attr}.required
-          record.errors.add attr, "is required"
+          self.errors.add attr, "is required"
         end
       end
     end
@@ -46,8 +46,8 @@ module ActsAsImageHolder
               @__acts_as_image_holder_filedata[field.thmb_field]  = thmbdata if field.thmb_field
               
               # presetting the filenames for the future files
-              self[field.image_field] = FileProc.guess_file_name(options, file)
-              self[field.thmb_field]  = FileProc.guess_thmb_file_name(options, file) if field.thmb_field
+              self[field.image_field] = FileProc.guess_file_name(options, file, field)
+              self[field.thmb_field]  = FileProc.guess_thmb_file_name(options, file, field) if field.thmb_field
               
             else
               # blobs direct assignment
@@ -71,6 +71,9 @@ module ActsAsImageHolder
     # defining file-based version additional features
     #
     if options.output_directory
+      # assigning a constant to keep it trackable outside of the code
+      const_set 'FILES_DIRECTORY', options.output_directory
+      
       #
       # file url locations getters
       #

@@ -26,5 +26,8 @@ end
 # run mibrations
 unless File.exists?($db_file)
   require File.dirname(__FILE__)+"/db/migrate/create_blobbed_images.rb"
+  require File.dirname(__FILE__)+"/db/migrate/create_image_with_files.rb"
+  
   CreateBlobbedImagesTable.migrate(:up)
+  CreateImageWithFilesTable.migrate(:up)
 end

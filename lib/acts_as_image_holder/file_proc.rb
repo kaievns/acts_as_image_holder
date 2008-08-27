@@ -7,23 +7,25 @@ require 'fileutils'
 class ActsAsImageHolder::FileProc
   class << self
     # guesses the name for the file
-    def guess_file_name(options, file)
+    def guess_file_name(options, file, field=nil)
       file_name = file.respond_to?(:original_filename) ? file.original_filename : File.basename(file.path)
+      file_name = file_name[0, file_name.rindex('.')]+".#{field.convert_to}" if field and field.convert_to
+      
       safe_file_name options, file_name
     end
     
     # guesses the thmb-filename
-    def guess_thmb_file_name(options, file)
+    def guess_thmb_file_name(options, file, field=nil)
       file_name = file.respond_to?(:original_filename) ? file.original_filename : File.basename(file.path)
-      
       file_name = file_name[0, file_name.rindex('.')]+"-thmb"+file_name[file_name.rindex('.'), file_name.size]
+      file_name = file_name[0, file_name.rindex('.')]+".#{field.thmb_type}" if field and field.thmb_type
       
       safe_file_name options, file_name
     end
     
     # writes down the file
     def write_file(options, file_name, file_data)
-      FileUtils.mkdir_p options.output_directory + "/" + file_name[0, file_name.rindex('/')]
+      FileUtils.mkdir_p options.output_directory + "/" + (file_name.include?('/') ? file_name[0, file_name.rindex('/')] : '')
       File.open(options.output_directory+"/"+file_name, 'wb') do |file|
         file.write file_data
       end
