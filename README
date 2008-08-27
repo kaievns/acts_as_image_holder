@@ -8,7 +8,114 @@ resizing, files organizations etc.
 Example
 =======
 
-Example goes here.
+A simple example mit be like that. A user unit which has a field
+'avatar' which will contain a file-name of his avatar and all the
+avatars will be saved in the "#{RAILS_ROOT}/public/images/userpics"
+directory.
+
+
+class User < ActiveRecord::Base
+  acts_as_image_holder :image_field => 'avatar',
+                       :output_directory => 'userpics'
+end
+
+
+More complex example, this time there are two blob-fields one 'image'
+will keep the image source, the second 'thmb', will contain the image
+thumbnail. All the incomming images will be resized to fit the size of
+600x400, the system will check that they are in type of gif, png or
+jpeg and then will automatically generate a thmbnail which will fit
+the size of 200x150 and will be in format of jpeg.
+
+
+class Image < ActiveRecord::Base
+  acts_as_image_holder :image_field => 'image',
+                       :resize_to => '600x400',
+		       :allowed_types => [:gif, :png, :jpeg],
+		       :thmb_field => 'thmb',
+		       :thmb_size => '200x150',
+		       :thmb_type => :jpeg
+end
+
+Each time there will be defined methods to direct assignment the
+files, like that
+
+User.new.image_field = File.open('some/your/file.png', 'rb')
+Image.image = File.open('some/file/of/yours.jpg', 'rb')
+
+Sure you can put right there the user uploaded images, use mass
+assignment, etc. Everything will be handled automatically.
+
+If have several images on your model, you can specify them by passing
+a list of image-definitions like that
+
+
+class Image < ActiveRecord::Base
+  acts_as_image_holder :image_fields => [
+                         { :image_field => 'main_image', ...},
+			 { :image_field => 'optional_image',..}
+                       ],
+		       :outout_directory => 'uploaded'
+end
+
+
+Options
+=======
+
+You can pass to the method the following options.
+
+[*] Output directory options
+   :output_directory - relative to "#{RAILS_ROOT}/public/images" or an
+                       absolute directory path.
+		       
+   :subdirectories - a string which will be put in the
+                     Time.now.strftime method and will generate
+                     subdirectories inside the output-directory.
+
+   NOTE: if the output-directory is not specified, it assumes that you
+   want to save your images as blobs inside your database
+
+[*] Image specification options
+   :image_field - the name of the main image field in your record, by
+                  default is 'image'
+
+   :image_type_field - name of the field where you would like to track
+                 each image type. the system will put strings like
+                 'gif', 'png', 'jpeg' into the field when the image
+                 will be assigned
+
+   :convert_to - :png/:gif/:jpeg - if specified all the incomming
+                 images will be converted to the sepcified type
+
+   :resize_to -  a string like '123x123' which meant width and height
+                 if specified all the incomming images will be
+                 proportionally resiezed to fit the given size.
+
+   :jpeg_quality - if you set the config to convert incomming images to
+                 jpegs, you can specify the jpeg-quality with the option
+
+   :allowed_types - list like [:png, :jpeg] if specified all the
+                 incomming images will get validated against the rule
+
+   :required    - boolean marke which shows if the image field should
+                  be treated as a required one during the validation
+
+
+[*] Thumbnailing options
+   :thmb_field  - the name of the field which will contain the thmb
+                  file name or the thmb-blob. if specified the thmbs
+                  will be generated automatically each time the main
+                  image field assigned
+
+   :thmb_size   - string like '123x123' which meant as width-height,
+                  if specified thmbs will be created to fit the size
+
+   :thmb_type   - :png/:gif/:jpeg - if specified all the thumbs will
+                  be created in the given type
+
+   :thmb_quality - the jpeg-thumbnails quality
+   
+
 
 
 Copyright (c) 2008 Nikolay V. Nemshilov, released under the MIT license
