@@ -25,7 +25,7 @@ will keep the image source, the second 'thmb', will contain the image
 thumbnail. All the incomming images will be resized to fit the size of
 600x400, the system will check that they are in type of gif, png or
 jpeg and then will automatically generate a thmbnail which will fit
-the size of 200x150 and will be in format of jpeg.
+the size of 200x150 and will be in format of jpeg. 
 
 
 class Image < ActiveRecord::Base
