@@ -31,10 +31,10 @@ the size of 200x150 and will be in format of jpeg.
 class Image < ActiveRecord::Base
   acts_as_image_holder :image_field => 'image',
                        :resize_to => '600x400',
-		       :allowed_types => [:gif, :png, :jpeg],
-		       :thmb_field => 'thmb',
-		       :thmb_size => '200x150',
-		       :thmb_type => :jpeg
+                       :allowed_types => [:gif, :png, :jpeg],
+                       :thmb_field => 'thmb',
+                       :thmb_size => '200x150',
+                       :thmb_type => :jpeg
 end
 
 Each time there will be defined methods to direct assignment the
@@ -53,9 +53,9 @@ a list of image-definitions like that
 class Image < ActiveRecord::Base
   acts_as_image_holder :image_fields => [
                          { :image_field => 'main_image', ...},
-			 { :image_field => 'optional_image',..}
+                         { :image_field => 'optional_image',..}
                        ],
-		       :outout_directory => 'uploaded'
+                       :outout_directory => 'uploaded'
 end
 
 
