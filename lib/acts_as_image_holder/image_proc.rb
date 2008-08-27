@@ -10,7 +10,7 @@ class ActsAsImageHolder::ImageProc
     # prepares the data of the field, perfomes resizing and type changes
     #
     def prepare_data(file, field)
-      resize(file, field.resize_to, field.convert_to, field.quality).to_blob
+      resize(file, field.resize_to, field.convert_to, field.jpeg_quality).to_blob
     end
     
     #
