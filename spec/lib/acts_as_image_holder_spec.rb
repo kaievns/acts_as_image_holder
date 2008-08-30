@@ -23,7 +23,7 @@ end
 
 describe ActsAsImageHolder do 
   describe "blobbed image" do 
-    before :each do
+    before :all do
       @image = BlobbedImage.new
     end
     
@@ -37,7 +37,7 @@ describe ActsAsImageHolder do
     end
     
     describe "not an image file assignment" do 
-      before :each do 
+      before :all do 
         @image.image = File.open(__FILE__, 'rb')
       end
       
@@ -48,7 +48,7 @@ describe ActsAsImageHolder do
     end
     
     describe "wrong type of image assignment" do 
-      before :each do 
+      before :all do 
         @image.image = File.open(File.dirname(__FILE__)+"/../images/test.gif", 'rb')
       end
       
@@ -59,7 +59,7 @@ describe ActsAsImageHolder do
     end
     
     describe "correct image assignment" do 
-      before :each do 
+      before :all do 
         @image.image = File.open(File.dirname(__FILE__)+"/../images/test.jpg", 'rb')
       end
       
@@ -82,12 +82,16 @@ describe ActsAsImageHolder do
   end
   
   describe "image with file" do 
-    before :each do
+    before :all do
       @image = ImageWithFile.new
       FileUtils.rm_rf ImageWithFile::FILES_DIRECTORY
     end
     
-    it "should have the 'image_file=' method" do 
+    after :all do 
+      FileUtils.rm_rf ImageWithFile::FILES_DIRECTORY
+    end
+    
+    it "should have the 'image_file=' method" do
       @image.public_methods.should include('image_file=')
     end
     
@@ -96,7 +100,7 @@ describe ActsAsImageHolder do
     end
     
     describe "not an image file assignment" do 
-      before :each do 
+      before :all do 
         @image.image_file = File.open(__FILE__, 'rb')
         @image.valid?
       end
@@ -115,7 +119,7 @@ describe ActsAsImageHolder do
     end
     
     describe "wrong image type assignment" do 
-      before :each do
+      before :all do
         @image.image_file = File.open(File.dirname(__FILE__)+"/../images/test.gif", 'rb')
         @image.valid?
       end
@@ -134,7 +138,7 @@ describe ActsAsImageHolder do
     end
     
     describe "correct image assignment" do 
-      before :each do 
+      before :all do 
         @image.image_file = File.open(File.dirname(__FILE__)+"/../images/test.jpg", 'rb')
       end
       
@@ -159,7 +163,7 @@ describe ActsAsImageHolder do
       end
       
       describe "record saving" do 
-        before :each do 
+        before :all do 
           @image.save
         end
         
@@ -176,7 +180,7 @@ describe ActsAsImageHolder do
         end
         
         describe "image-file" do 
-          before :each do 
+          before :all do 
             @image = Magick::Image.read("#{ImageWithFile::FILES_DIRECTORY}/test.png").first
           end
           
@@ -191,7 +195,7 @@ describe ActsAsImageHolder do
         end
         
         describe "thumb-file" do 
-          before :each do 
+          before :all do 
             @image = Magick::Image.read("#{ImageWithFile::FILES_DIRECTORY}/test-thumb.gif").first
           end
           
@@ -206,7 +210,7 @@ describe ActsAsImageHolder do
         end
         
         describe "image removing" do 
-          before :each do 
+          before :all do 
             @image.destroy
           end
           
