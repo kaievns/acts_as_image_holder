@@ -17,12 +17,11 @@ protected
   def find_fields_in(options)
     @fields = []
     
-    if options[:image_fields]
-      options[:image_fields].each do |image_options|
-        @fields << Field.new(image_options) if image_options[:image_field]
+    if options[:image_fields] or options[:images]
+      (options[:image_fields] || options[:images]).each do |image_options|
+        @fields << Field.new(image_options) if image_options[:image_field] or options[:images]
       end
     else
-      options[:image_field] ||= DEFAULT_IMAGE_FIELD
       @fields << Field.new(options)
     end
   end
@@ -41,10 +40,16 @@ protected
   # describes an image field options
   #
   class Field
-    OPTIONS = %w{image_field image_type_field resize_to convert_to required allowed_types maximum_bytes
-                 jpeg_quality thumb_field thumb_size thumb_quality thumb_type}.collect(&:to_sym)
+    OPTIONS = %w{image_field image_type_field resize_to convert_to required allowed_types 
+                 maximum_bytes jpeg_quality thumb_field thumb_size thumb_quality thumb_type
+                 }.collect(&:to_sym)
     
     def initialize(options)
+      options[:image_field] = options[:field] if options[:field] and !options[:image_field]
+      options[:image_field] ||= DEFAULT_IMAGE_FIELD
+      
+      options[:image_type_field] = options[:type_field] if options[:type_field] and !options[:image_type_field]
+      
       @options = {}
       
       OPTIONS.each do |name|

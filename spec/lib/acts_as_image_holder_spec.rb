@@ -18,6 +18,7 @@ class ImageWithFile < ActiveRecord::Base
                        :thumb_field => 'image_thumb_file',
                        :thumb_type => :gif,
                        :thumb_size => '40x40',
+                       :thumb_quality => 90,
                        :output_directory => '/tmp/images_test'
 end
 

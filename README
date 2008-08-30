@@ -46,6 +46,9 @@ Image.image = File.open('some/file/of/yours.jpg', 'rb')
 Sure you can put right there the user uploaded images, use mass
 assignment, etc. Everything will be handled automatically.
 
+Several Images Processing
+=========================
+
 If have several images on your model, you can specify them by passing
 a list of image-definitions like that
 
@@ -57,6 +60,17 @@ class Image < ActiveRecord::Base
                        ],
                        :outout_directory => 'uploaded'
 end
+
+or you can use a shortified interface like this
+
+class Image < ActiveRecord::Base
+  acts_as_image_holder :images => [
+                         { :field => 'main_image', :type_field => '...'},
+                         { :field => 'optional_image',..}
+                       ],
+                       :outout_directory => 'uploaded'
+end
+
 
 
 Options

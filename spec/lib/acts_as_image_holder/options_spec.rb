@@ -125,6 +125,48 @@ describe ActsAsImageHolder::Options do
     end
   end
   
+  describe "several image-fields definition by shortify notification" do 
+    before :each do 
+      @o = ActsAsImageHolder::Options.new({
+        :images => [{ :field => 'field1', :convert_to => :jpg },
+                    { :field => 'field2', :type_field => 'field2_type'}
+                   ]
+      })
+    end
+    
+    it do 
+      @o.should have(2).fields
+    end
+    
+    describe "first field" do 
+      before :each do 
+        @f = @o.fields.first
+      end
+      
+      it do 
+        @f.image_field.should == 'field1'
+      end
+      
+      it do 
+        @f.convert_to.should == :jpeg
+      end
+    end
+    
+    describe "second field" do 
+      before :each do 
+        @f = @o.fields.last
+      end
+      
+      it do 
+        @f.image_field.should == 'field2'
+      end
+      
+      it do 
+        @f.image_type_field == 'field2_type'
+      end
+    end
+  end
+  
   describe "directory options" do 
     describe "absolute path" do 
       before :each do 
