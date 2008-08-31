@@ -10,14 +10,14 @@ class ActsAsImageHolder::ImageProc
     # prepares the data of the field, perfomes resizing and type changes
     #
     def prepare_data(file, field)
-      resize(file, field.resize_to, field.convert_to, field.jpeg_quality)
+      resize(file, field.size, field.type, field.quality)
     end
     
     #
     # creates a thumbnail of the image-file
     #
     def create_thumb(file, field)
-      resize(file, field.thumb_size, field.thumb_type, field.thumb_quality)
+      resize(file, field.size, field.type, field.quality)
     end
     
     # gets the image type
@@ -31,9 +31,8 @@ class ActsAsImageHolder::ImageProc
       
       image = image_from(file)
       
-      
-      image.resize_to_fit! size[0], size[1] if size
-      image.format = format.to_s            if format
+      image.resize_to_fit! *size if size
+      image.format = format.to_s if format
       
       image.to_blob { self.quality = quality if quality }
     end
