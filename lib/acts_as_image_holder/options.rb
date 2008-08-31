@@ -95,6 +95,11 @@ protected
       find_thumbs_in options.reject{ |k,v| [:field, :type, :size, :quality].include? k }
     end
     
+    # checks if the image allowed the given type
+    def allowed_type?(t)
+      !allowed_types or allowed_types.include?(t)
+    end
+    
     def find_thumbs_in(options)
       @thumbs = []
       if options[:thumbs].is_a? Array

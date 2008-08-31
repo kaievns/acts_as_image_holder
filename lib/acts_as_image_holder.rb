@@ -13,13 +13,13 @@ module ActsAsImageHolder
     #
     # define validators
     #
-    validates_each options.fields.collect(&:image_field) do |record, attr, value|
+    validates_each options.images.collect(&:field) do |record, attr, value|
       record.instance_eval do 
         if @__acts_as_image_holder_problems
           self.errors.add attr, "is not an image" if @__acts_as_image_holder_problems[attr] == :not_an_image
           self.errors.add attr, "has wrong type"  if @__acts_as_image_holder_problems[attr] == :wrong_type
         
-        elsif options.fields.find{ |f| f.image_field == attr}.required
+        elsif options.images.find{ |i| i.field == attr }.required
           self.errors.add attr, "is required"
         end
       end
@@ -28,41 +28,48 @@ module ActsAsImageHolder
     #
     # define the image files setting handling
     #
-    options.fields.each do |field|
-      define_method "#{field.image_field}=" do |file|
+    options.images.each do |image|
+      define_method "#{image.field}=" do |file|
         @__acts_as_image_holder_problems ||= { }
         @__acts_as_image_holder_filedata ||= { }
+        @__acts_as_image_holder_thumbsdata ||= { }
         
         begin
           # reading and converting the file
-          filedata = ImageProc.prepare_data(file, field)
-          thumbdata = ImageProc.create_thumb(file, field) if field.thumb_field
+          filedata = ImageProc.prepare_data(file, image)
+          thumbs = image.thumbs.collect{ |thumb| [thumb, ImageProc.create_thumb(file, thumb)] }
           
           # check if the file has a right type
-          if !field.allowed_types or field.allowed_types.include? ImageProc.get_type(file)
-            if options.output_directory
+          if image.allowed_type? ImageProc.get_type(file)
+            if options.directory
               # save the data for the future file-writting
-              @__acts_as_image_holder_filedata[field.image_field] = filedata
-              @__acts_as_image_holder_filedata[field.thumb_field]  = thumbdata if field.thumb_field
+              @__acts_as_image_holder_filedata[image.field] = filedata
+              thumbs.each do |thumb|
+                @__acts_as_image_holder_thumbsdata[thumb[0].field]  = thumb[1]
+              end
               
               # presetting the filenames for the future files
-              self[field.image_field] = FileProc.guess_file_name(options, file, field)
-              self[field.thumb_field]  = FileProc.guess_thumb_file_name(options, file, field) if field.thumb_field
+              self[image.field] = FileProc.guess_file_name(options, file, image)
+              image.thumbs.each do |thumb, i|
+                self[thumb.field] = FileProc.guess_thumb_file_name(options, file, thumb, i)
+              end
               
             else
               # blobs direct assignment
-              self[field.image_field] = filedata
-              self[field.thumb_field]  = thumbdata if field.thumb_field
+              self[image.field] = filedata
+              thumbs.each do |thumb|
+                self[thumb[0].field] = thumb[1]
+              end
             end
             
-            self[field.image_type_field] = "#{ImageProc.get_type(filedata)}" if field.image_type_field
+            self[image.type_field] = "#{ImageProc.get_type(filedata)}" if image.type_field
             
           else
-            @__acts_as_image_holder_problems[field.image_field] = :wrong_type
+            @__acts_as_image_holder_problems[image.field] = :wrong_type
           end
           
         rescue Magick::ImageMagickError
-          @__acts_as_image_holder_problems[field.image_field] = :not_an_image
+          @__acts_as_image_holder_problems[image.field] = :not_an_image
         end
       end
     end
@@ -70,21 +77,21 @@ module ActsAsImageHolder
     #
     # defining file-based version additional features
     #
-    if options.output_directory
+    if options.directory
       # assigning a constant to keep it trackable outside of the code
-      const_set 'FILES_DIRECTORY', options.output_directory
+      const_set 'FILES_DIRECTORY', options.directory
       
       #
       # file url locations getters
       #
-      options.fields.each do |field|
-        define_method "#{field.image_field}_url" do 
-          __file_url_for self[field.image_field] if self[field.image_field]
+      options.images.each do |image|
+        define_method "#{image.field}_url" do 
+          __file_url_for self[image.field] unless self[image.field].blank?
         end
         
-        if field.thumb_field
-          define_method "#{field.thumb_field}_url" do 
-            __file_url_for self[field.thumb_field] if self[field.thumb_field]
+        image.thumbs.each do |thumb|
+          define_method "#{thumb.field}_url" do 
+            __file_url_for self[thumb.field] unless self[thumb.field].blank?
           end
         end
       end
@@ -106,8 +113,8 @@ module ActsAsImageHolder
       
       # writting down the files
       define_method :acts_as_image_holder_write_files do 
-        if @__acts_as_image_holder_filedata
-          @__acts_as_image_holder_filedata.each do |field_name, filedata|
+        [@__acts_as_image_holder_filedata, @__acts_as_image_holder_thumbsdata].each do |data_collection|
+          data_collection.each do |field_name, filedata|
             FileProc.write_file(options, self[field_name], filedata)
           end
         end
@@ -115,9 +122,11 @@ module ActsAsImageHolder
       
       # removing related files after the record is deleted
       define_method :acts_as_image_holder_remove_files do 
-        options.fields.each do |field|
-          FileProc.remove_file(options, self[field.image_field])
-          FileProc.remove_file(options, self[field.thumb_field]) if field.thumb_field
+        options.images.each do |image|
+          FileProc.remove_file(options, self[image.field])
+          image.thumbs.each do |thumb|
+            FileProc.remove_file(options, self[thumb.field])
+          end
         end
       end
     end

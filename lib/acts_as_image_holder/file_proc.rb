@@ -12,13 +12,13 @@ class ActsAsImageHolder::FileProc
     end
     
     # guesses the thumb-filename
-    def guess_thumb_file_name(options, file, field=nil)
-      safe_file_name options, file, field, 'thumb'
+    def guess_thumb_file_name(options, file, field=nil, i=0)
+      safe_file_name options, file, field, "thumb#{i==0?'':i}"
     end
     
     # guess original file-name
-    def guess_original_file_name(options, file, field=nil)
-      safe_file_name options, file, field, 'orig'
+    def guess_original_file_name(options, file)
+      safe_file_name options, file, nil, 'orig'
     end
     
     # writes down the file
@@ -37,7 +37,7 @@ class ActsAsImageHolder::FileProc
     
   private
     # generates a safe file-name depend on the given file-name
-    def safe_file_name(options, file, field, suffix=nil)
+    def safe_file_name(options, file, field=nil, suffix=nil)
       # creating a clean file-name
       file_name = file.respond_to?(:original_filename) ? file.original_filename : File.basename(file.path)
       file_name = file_name[0, file_name.rindex('.')]+".#{field.type}" if field and field.type
