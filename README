@@ -147,8 +147,8 @@ class Image < ActiveRecord::Base
                        :outout_directory => 'uploaded'
 end
 
-Sure, each image can have several thumbnails if you like. You can use
-sort notation as well
+Sure, each image can have several thumbnails if you like. And you can
+use the short notation as well
 
 class Image < ActiveRecord::Base
   acts_as_image_holder :image_field => 'full_size',
