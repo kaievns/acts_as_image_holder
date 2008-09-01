@@ -33,6 +33,13 @@ module ActsAsImageHolder
         @__acts_as_image_holder_problems ||= { }
         @__acts_as_image_holder_filedata ||= { }
         
+        if file.nil?
+          self[field.image_field] = nil
+          self[field.thumb_field] = nil if field.thumb_field
+          
+          return
+        end
+        
         begin
           # reading and converting the file
           filedata = ImageProc.prepare_data(file, field)
