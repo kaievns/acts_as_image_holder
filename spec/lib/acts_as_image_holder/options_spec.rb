@@ -21,7 +21,7 @@ describe ActsAsImageHolder::Options do
       
       it "should have not set the other fields" do 
         %w{type_field size type allowed_types maximum_bytes 
-           quality original thumbs}.each do |name|
+           quality original}.each do |name|
           
           @image.send(name).should be_nil
         end

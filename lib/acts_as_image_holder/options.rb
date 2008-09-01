@@ -62,8 +62,8 @@ protected
     #
     class Watermark
       PUBLIC_ATTRS = [
-        :file, :text, :font, :position, :shadow, :shadow_color, :shade,
-        :stroke, :stroke_width, :color, :rotate, :offset, :undercolor
+        :file, :text, :font, :position, :shadow, :shadow_color, :shade, :composite_op,
+        :stroke, :stroke_width, :color, :rotate, :offset, :undercolor, :text_align
       ]
       attr_reader *PUBLIC_ATTRS
       
@@ -71,6 +71,13 @@ protected
         PUBLIC_ATTRS.each do |name|
           instance_variable_set "@#{name}", options[name]
         end
+        
+        @position ||= [:bottom, :right]
+        @offset   ||= 10
+      end
+      
+      def [](key)
+        send(key)
       end
     end
   end
@@ -106,6 +113,7 @@ protected
     
     def find_thumbs_in(options)
       @thumbs = []
+      
       if options[:thumbs].is_a? Array
         options[:thumbs].each do |thumb_options|
           @thumbs << Thumb.new(thumb_options)
@@ -113,8 +121,6 @@ protected
       elsif options[:thumb_field]
         @thumbs << Thumb.new(options)
       end
-      
-      @thumbs = nil if @thumbs.empty?
     end
     
     # parses out and represents the thumb options

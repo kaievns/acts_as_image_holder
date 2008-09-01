@@ -34,3 +34,13 @@ unless File.exists?($db_file)
   CreateImageWithFilesTable.migrate(:up)
   CreateImageWithSeveralFieldsTable.migrate(:up)
 end
+
+unless defined? ActionController
+  module ActionController
+    class UploadedStringIO < StringIO
+    end
+    
+    class UploadedTempfile < Tempfile
+    end
+  end
+end

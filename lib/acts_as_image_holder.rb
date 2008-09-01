@@ -17,11 +17,11 @@ module ActsAsImageHolder
     #
     validates_each options.images.collect(&:field) do |record, attr, value|
       record.instance_eval do 
-        if @__acts_as_image_holder_problems
+        if @__acts_as_image_holder_problems and !@__acts_as_image_holder_problems.blank?
           self.errors.add attr, "is not an image" if @__acts_as_image_holder_problems[attr] == :not_an_image
           self.errors.add attr, "has wrong type"  if @__acts_as_image_holder_problems[attr] == :wrong_type
         
-        elsif options.images.find{ |i| i.field == attr }.required
+        elsif options.images.find{ |i| i.field == attr }.required and self[attr].blank?
           self.errors.add attr, "is required"
         end
       end
@@ -36,21 +36,7 @@ module ActsAsImageHolder
         @__acts_as_image_holder_filedata ||= { }
         @__acts_as_image_holder_thumbsdata ||= { }
         
-        # nullifying the field
-        if file.nil?
-          FileProc.remove_file(options, self[image.field])
-          self[image.field] = nil
-          image.thumbs.each do |thumb|
-            FileProc.remove_file(options, self[thumb.field])
-            self[thumb.field] = nil
-          end
-          if image.original
-            FileProc.remove_file(options, self[image.original])
-            self[image.original]
-          end
-          
-          return
-        end
+        return if file.blank?
         
         begin
           # reading and converting the file
@@ -174,22 +160,22 @@ module ActsAsImageHolder
       #
       def resize_file(file, size, format=nil, quality=nil)
         file = File.open(file) if file.is_a? String
-        ImageProc.resize(file, size, format, quality)
+        ActsAsImageHolder::ImageProc.resize(file, size, format, quality)
       end
       
       def resize_blob(blob, size, format=nil, quality=nil)
-        ImageProc.resize(blob, size, format, quality)
+        ActsAsImageHolder::ImageProc.resize(blob, size, format, quality)
       end
       
       #
       # Puts a watermark on the given image with the given options
       #
       def watermark_file(file, options)
-        ImageProc.watermark(file, options)
+        ActsAsImageHolder::ImageProc.watermark(file, options)
       end
       
       def watermark_blob(blob, options)
-        ImageProc.watermark_blob(blob, options)
+        ActsAsImageHolder::ImageProc.watermark_blob(blob, options)
       end
     end_eval
   end 
