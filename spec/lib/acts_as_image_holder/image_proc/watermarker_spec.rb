@@ -32,10 +32,10 @@ describe ActsAsImageHolder::ImageProc::Watermarker do
     end
     
     it "save the image" do 
-  #    FileUtils.mkdir_p "/tmp/images"
-  #    File.open("/tmp/images/test.jpg", "wb") do |file|
-  #      file.write @out_blob
-  #    end
+    #  FileUtils.mkdir_p "/tmp/images"
+    #  File.open("/tmp/images/test.jpg", "wb") do |file|
+    #    file.write @out_image.to_blob
+    #  end
     end
     
     it "should have the same format" do 
@@ -70,7 +70,7 @@ describe ActsAsImageHolder::ImageProc::Watermarker do
     it "save the image" do 
     #  FileUtils.mkdir_p "/tmp/images"
     #  File.open("/tmp/images/test.jpg", "wb") do |file|
-    #    file.write @out_blob
+    #    file.write @out_image.to_blob
     #  end
     end
     

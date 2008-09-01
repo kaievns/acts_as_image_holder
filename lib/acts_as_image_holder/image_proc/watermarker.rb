@@ -51,7 +51,6 @@ class ActsAsImageHolder::ImageProc::Watermarker
           self.background_color = 'transparent'
         }.composite!(shadow, Magick::CenterGravity, options[:shadow][0], options[:shadow][1], Magick::OverCompositeOp
         ).composite!(image,  Magick::CenterGravity, Magick::OverCompositeOp)
-        # image = shadow.composite! image, Magick::CenterGravity, -options[:shadow][0], -options[:shadow][1],  Magick::OverCompositeOp
       end
       
       image
