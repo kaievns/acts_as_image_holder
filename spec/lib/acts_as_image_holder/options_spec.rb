@@ -7,23 +7,23 @@ describe ActsAsImageHolder::Options do
     end
     
     it "should have 1 field" do 
-      @o.should have(1).field
+      @o.should have(1).image
     end
     
-    describe "field" do 
+    describe "image" do 
       before :each do 
-        @f = @o.fields.first
+        @image = @o.images.first
       end
       
       it "should has the name of 'image'" do 
-        @f.image_field.should == 'image'
+        @image.field.should == 'image'
       end
       
       it "should have not set the other fields" do 
-        %w{image_type_field resize_to convert_to allowed_types maximum_bytes 
-           jpeg_quality thumb_field thumb_size}.each do |name|
+        %w{type_field size type allowed_types maximum_bytes 
+           quality original thumbs}.each do |name|
           
-          @f.send(name).should be_nil
+          @image.send(name).should be_nil
         end
       end
     end
@@ -33,6 +33,7 @@ describe ActsAsImageHolder::Options do
     before :each do 
       @o = ActsAsImageHolder::Options.new({ :image_field => 'my_field',
                                             :image_type_field => 'my_field_type',
+                                            :original_field => 'my_field_original',
                                             
                                             :resize_to => '400x300',
                                             :convert_to => :jpg,
@@ -45,82 +46,138 @@ describe ActsAsImageHolder::Options do
                                           })
     end
     
-    it "should have 1 field" do 
-      @o.should have(1).field
+    it "should have 1 image" do 
+      @o.should have(1).image
     end
     
-    describe "field" do 
+    describe "image" do 
       before :each do 
-        @f = @o.fields.first
+        @f = @o.images.first
       end
       
-      it do 
-        @f.image_field.should == 'my_field'
+      it "should set the field" do 
+        @f.field.should == 'my_field'
       end
       
-      it do 
-        @f.image_type_field.should == 'my_field_type'
+      it "should set the type-field" do 
+        @f.type_field.should == 'my_field_type'
       end
       
-      it do 
-        @f.resize_to.should == [400, 300]
+      it "should set the original field" do 
+        @f.original.should == 'my_field_original'
       end
       
-      it do 
-        @f.convert_to.should == :jpeg
+      it "should set the size" do 
+        @f.size.should == [400, 300]
       end
       
-      it do 
+      it "should apply the type" do 
+        @f.type.should == :jpeg
+      end
+      
+      it "should apply the types" do 
         @f.allowed_types.should == [:png, :gif, :jpeg]
       end
       
-      it do 
+      it "should set the maximum-bytes" do 
         @f.maximum_bytes.should == 2048
       end
       
-      it do 
-        @f.jpeg_quality.should == 90
+      it "should set the quality" do 
+        @f.quality.should == 90
       end
       
-      it do 
-        @f.thumb_field.should == 'my_field_thumb'
+      it "should have one thumb" do
+        @f.should have(1).thumb
       end
       
-      it do 
-        @f.thumb_size.should == [40, 30]
+      describe "thumb" do 
+        before :each do 
+          @thumb = @f.thumbs.first
+        end
+        
+        it "should have the field" do 
+          @thumb.field.should == 'my_field_thumb'
+        end
+      
+        it "should have the size" do 
+          @thumb.size.should == [40, 30]
+        end
       end
     end
   end
   
   describe "several image-fields definition" do 
     before :each do 
-      @o = ActsAsImageHolder::Options.new({ :image_fields => [{ :image_field => 'field1' },
-                                                              { :image_field => 'field2' }
-                                                             ]
+      @o = ActsAsImageHolder::Options.new({ :images => [{ :image_field => 'field1' },
+                                                        { :image_field => 'field2' }
+                                                       ]
                                           })
     end
     
-    it do 
-      @o.should have(2).fields
+    it "should have two images" do 
+      @o.should have(2).images
     end
     
-    describe "first field" do 
+    describe "first image" do 
       before :each do 
-        @f = @o.fields.first
+        @image = @o.images.first
       end
       
-      it do 
-        @f.image_field.should == 'field1'
+      it "should have the field" do 
+        @image.field.should == 'field1'
       end
     end
     
-    describe "second field" do 
+    describe "second image" do 
       before :each do 
-        @f = @o.fields.last
+        @image = @o.images.last
       end
       
-      it do 
-        @f.image_field.should == 'field2'
+      it "should have the field" do 
+        @image.field.should == 'field2'
+      end
+    end
+  end
+  
+  describe "several image-fields definition by shortify notification" do 
+    before :each do 
+      @o = ActsAsImageHolder::Options.new({
+        :images => [{ :field => 'field1', :convert_to => :jpg },
+                    { :field => 'field2', :type_field => 'field2_type'}
+                   ]
+      })
+    end
+    
+    it "should have two fields" do 
+      @o.should have(2).images
+    end
+    
+    describe "first image" do 
+      before :each do 
+        @image = @o.images.first
+      end
+      
+      it "should have the field" do 
+        @image.field.should == 'field1'
+      end
+      
+      it "should have the type" do 
+        @image.type.should == :jpeg
+      end
+    end
+    
+    describe "second image" do 
+      before :each do 
+        @image = @o.images.last
+      end
+      
+      it "should have the field" do 
+        @image.field.should == 'field2'
+      end
+      
+      it "should have the type-field" do 
+        @image.type_field == 'field2_type'
       end
     end
   end
@@ -131,12 +188,12 @@ describe ActsAsImageHolder::Options do
         @o = ActsAsImageHolder::Options.new({:output_directory => '/asdf/asdf', :subdirectories => 'asdf'})
       end
       
-      it do 
-        @o.output_directory.should == '/asdf/asdf'
+      it "should set the directory option" do 
+        @o.directory.should == '/asdf/asdf'
       end
       
-      it do 
-        @o.subdirectories.should == 'asdf'
+      it "should set the subdirs option" do 
+        @o.subdirs.should == 'asdf'
       end
     end
     
@@ -145,8 +202,22 @@ describe ActsAsImageHolder::Options do
         @o = ActsAsImageHolder::Options.new(:output_directory => 'uploads')
       end
       
-      it do 
-        @o.output_directory.should == "#{RAILS_ROOT}/public/images/uploads"
+      it "should set the directory option" do 
+        @o.directory.should == "#{RAILS_ROOT}/public/images/uploads"
+      end
+    end
+    
+    describe "short version" do 
+      before :each do 
+        @o = ActsAsImageHolder::Options.new(:directory => '/asdf', :subdirs => 'bla')
+      end
+      
+      it "should set the directory" do 
+        @o.directory.should == "/asdf"
+      end
+      
+      it "should set the subdirs" do 
+        @o.subdirs.should == "bla"
       end
     end
   end

@@ -3,17 +3,17 @@ require File.dirname(__FILE__)+"/../../spec_helper"
 describe ActsAsImageHolder::FileProc do 
   before :each do 
     @file = File.open(File.dirname(__FILE__)+"/../../images/test.jpg", 'rb')
-    @options = ActsAsImageHolder::Options.new(:output_directory => "/tmp/images/spec",
-                                              :subdirectories => "%Y-%m")
+    @options = ActsAsImageHolder::Options.new(:directory => "/tmp/images/spec",
+                                              :subdirs => "%Y-%m")
   end
   
   after :all do 
-    FileUtils.rm_rf @options.output_directory
+    FileUtils.rm_rf @options.directory
   end
   
   describe "file-name guess" do 
     before :each do 
-      FileUtils.rm_rf @options.output_directory
+      FileUtils.rm_rf @options.directory
       
       @file_name = ActsAsImageHolder::FileProc.guess_file_name @options, @file
     end
@@ -27,13 +27,13 @@ describe ActsAsImageHolder::FileProc do
     end
     
     it "should start with the directory name" do 
-      @file_name[0,8].should == Time.now.strftime("%Y-%m")+"/"
+      @file_name[0,8].should == Time.now.strftime(@options.subdirs)+"/"
     end
     
     describe "file writting" do 
       before :each do 
         ActsAsImageHolder::FileProc.write_file(@options, @file_name, 'something')
-        @full_name = @options.output_directory+"/"+@file_name
+        @full_name = @options.directory+"/"+@file_name
       end
       
       it "should exists" do 
@@ -69,7 +69,7 @@ describe ActsAsImageHolder::FileProc do
   
   describe "thumb file-name guess" do 
     before :each do 
-      FileUtils.rm_rf @options.output_directory
+      FileUtils.rm_rf @options.directory
       
       @file_name = ActsAsImageHolder::FileProc.guess_thumb_file_name @options, @file
     end
