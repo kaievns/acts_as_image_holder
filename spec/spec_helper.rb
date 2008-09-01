@@ -6,6 +6,7 @@ unless defined? ActsAsImageHolder
   require File.dirname(__FILE__)+"/../lib/acts_as_image_holder/options"
   require File.dirname(__FILE__)+"/../lib/acts_as_image_holder/file_proc"
   require File.dirname(__FILE__)+"/../lib/acts_as_image_holder/image_proc"
+  require File.dirname(__FILE__)+"/../lib/acts_as_image_holder/image_proc/watermarker"
   
   class ActiveRecord::Base
     extend ActsAsImageHolder

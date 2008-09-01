@@ -10,14 +10,9 @@ class ActsAsImageHolder::ImageProc
     # prepares the data of the field, perfomes resizing and type changes
     #
     def prepare_data(file, field)
-      resize(file, field.size, field.type, field.quality)
-    end
-    
-    #
-    # creates a thumbnail of the image-file
-    #
-    def create_thumb(file, field)
-      resize(file, field.size, field.type, field.quality)
+      blob = resize(file, field.size, field.type, field.quality)
+      blob = watermark_blob(blob) if field.watermark
+      blob
     end
     
     # gets the image type
@@ -37,8 +32,21 @@ class ActsAsImageHolder::ImageProc
       image.to_blob { self.quality = quality if quality }
     end
     
+    # converts the given source to a blob-string
     def to_blob(file)
       image_from(file).to_blob
+    end
+    
+    # watermarks the given image
+    # accepts a source or an image instance
+    def watermark(image, options)
+      image = image_from(image) unless image.is_a Magick::Image
+      Watermarker.process(image, options)
+    end
+    
+    # same as the 'watermark' method but accepts and returns a blob string
+    def watermark_blob(blob, options)
+      Watermarker.process(Magick::Image.from_blob(src).first, options).to_blob
     end
     
   private

@@ -61,10 +61,14 @@ protected
     # Parses and represents the watermarking options
     #
     class Watermark
-      attr_reader :file, :blob, :text, :font, :position, :repeat, :shade
+      PUBLIC_ATTRS = [
+        :file, :text, :font, :position, :shadow, :shadow_color, :shade,
+        :stroke, :stroke_width, :color, :rotate, :offset, :undercolor
+      ]
+      attr_reader *PUBLIC_ATTRS
       
       def initialize(options)
-        [:file, :blob, :text, :font, :position, :repeat, :shade].each do |name|
+        PUBLIC_ATTRS.each do |name|
           instance_variable_set "@#{name}", options[name]
         end
       end

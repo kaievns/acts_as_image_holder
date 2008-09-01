@@ -54,7 +54,7 @@ module ActsAsImageHolder
           # reading and converting the file
           filedata = ImageProc.prepare_data(file, image)
           origdata = ImageProc.to_blob(file) if image.original
-          thumbs = image.thumbs.collect{ |thumb| [thumb, ImageProc.create_thumb(file, thumb)] }
+          thumbs = image.thumbs.collect{ |thumb| [thumb, ImageProc.prepare_data(file, thumb)] }
           
           # check if the file has a right type
           if image.allowed_type? ImageProc.get_type(file)
@@ -161,14 +161,15 @@ module ActsAsImageHolder
     #
     # Some additional useful images handling methods
     #
-    # Resize a file and a blob-string
-    #
-    # @param file - File object or a string file-path
-    # @param size - [width, height] array or a "widthxheight" string
-    # @param format - "gif", "jpeg", "png", or nil to keep the same
-    # @param quality - jpeg - quality 0 - 100, nil to keep the same
-    #
     module_eval <<-"end_eval"
+      #
+      # Resize a file and a blob-string
+      #
+      # @param file - File object or a string file-path
+      # @param size - [width, height] array or a "widthxheight" string
+      # @param format - "gif", "jpeg", "png", or nil to keep the same
+      # @param quality - jpeg - quality 0 - 100, nil to keep the same
+      #
       def resize_file(file, size, format=nil, quality=nil)
         file = File.open(file) if file.is_a? String
         ImageProc.resize(file, size, format, quality)
@@ -176,6 +177,17 @@ module ActsAsImageHolder
       
       def resize_blob(blob, size, format=nil, quality=nil)
         ImageProc.resize(blob, size, format, quality)
+      end
+      
+      #
+      # Puts a watermark on the given image with the given options
+      #
+      def watermark_file(file, options)
+        ImageProc.watermark(file, options)
+      end
+      
+      def watermark_blob(blob, options)
+        ImageProc.watermark_blob(blob, options)
       end
     end_eval
   end 
