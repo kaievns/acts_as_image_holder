@@ -108,7 +108,7 @@ You can pass to the method the following options.
    :thumb_quality - the jpeg-thumbnails quality
 
 
-[*] Shortified versions of options
+[*] Shortified versions of the options
    :field      == :image_field
    :type_field == :image_type_field
    :original   == :original_field
@@ -157,7 +157,7 @@ class Image < ActiveRecord::Base
                            :field => 'average_size',
                            :size  => '200x200'
                          }
-		       ]
+                       ]
 end
 
 
