@@ -4,6 +4,8 @@
 # Copyright (C) by Nikolay V. Nemshilov aka St.
 #
 module ActsAsImageHolder
+  VERSION = "0.8.0"
+  
   #
   # The method for the users
   #
