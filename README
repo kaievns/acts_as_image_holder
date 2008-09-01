@@ -235,7 +235,7 @@ Watermarking Options
         placed over your image
 
 :position - where to put your text. There are several options
-            possible, but they are prettymuch standard. Use arrays
+            possible, but they are pretty much standard. Use arrays
             like [:top, :left], [:center, :right], [:bottom, :center],
             or just :top, :left, :center, etc. Or some compas like
             directions :south, :southeast, :north, etc.
@@ -245,11 +245,11 @@ Watermarking Options
 :rotate - integer degrees, how the watermark should be rotated
           (clockwise)
 
-:shade - the shade effect options. And array like
+:shade - the shade effect options. An array like
          [bool, int, int]
 
 :shadow - the shadow effect options. An array like
-         [left_offset=4, top_offset=4, blurrness=4, opacity=1]
+         [left_offset=4, top_offset=4, blureness=4, opacity=1]
 
 :shadow_color - the shadow effect color if you need so.
 
