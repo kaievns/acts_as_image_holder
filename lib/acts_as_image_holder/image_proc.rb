@@ -37,6 +37,10 @@ class ActsAsImageHolder::ImageProc
       image.to_blob { self.quality = quality if quality }
     end
     
+    def to_blob(file)
+      image_from(file).to_blob
+    end
+    
   private
     # converts the source into an image object
     def image_from(src)

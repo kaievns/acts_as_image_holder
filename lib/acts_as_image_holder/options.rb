@@ -88,7 +88,7 @@ protected
       @quality    = options[:quality] || options[:jpeg_quality]
       @original   = options[:original] || options[:original_field]
       @required   = options[:required]
-      @watermark  = Watermark.new(options[:watermark]) if options[:watermark]
+      @watermark  = Watermark.new(options[:watermark]||options[:image_watermark]) if options[:watermark] || options[:image_watermark]
       @allowed_types = options[:allowed_types].to_a.collect{ |t| parse_type(t) } if options[:allowed_types]
       @maximum_bytes = options[:maximum_bytes]
       
@@ -124,7 +124,7 @@ protected
         @type  = parse_type( options[:type] || options[:thumb_type] || :jpeg )
         @size  = parse_size( options[:size] || options[:thumb_size] || DEFAULT_THUMB_SIZE )
         @quality = options[:quality] || options[:thmb_quality]
-        @watermark = Watermark.new options[:watermark] if options[:watermark]
+        @watermark = Watermark.new(options[:watermark] || options[:thumb_watermark]) if options[:watermark] or options[:thumb_watermark]
       end
     end
   end

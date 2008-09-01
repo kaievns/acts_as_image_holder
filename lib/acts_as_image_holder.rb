@@ -34,9 +34,18 @@ module ActsAsImageHolder
         @__acts_as_image_holder_filedata ||= { }
         @__acts_as_image_holder_thumbsdata ||= { }
         
+        # nullifying the field
         if file.nil?
-          self[field.image_field] = nil
-          self[field.thumb_field] = nil if field.thumb_field
+          FileProc.remove_file(options, self[image.field])
+          self[image.field] = nil
+          image.thumbs.each do |thumb|
+            FileProc.remove_file(options, self[thumb.field])
+            self[thumb.field] = nil
+          end
+          if image.original
+            FileProc.remove_file(options, self[image.original])
+            self[image.original]
+          end
           
           return
         end
@@ -44,6 +53,7 @@ module ActsAsImageHolder
         begin
           # reading and converting the file
           filedata = ImageProc.prepare_data(file, image)
+          origdata = ImageProc.to_blob(file) if image.original
           thumbs = image.thumbs.collect{ |thumb| [thumb, ImageProc.create_thumb(file, thumb)] }
           
           # check if the file has a right type
@@ -51,12 +61,14 @@ module ActsAsImageHolder
             if options.directory
               # save the data for the future file-writting
               @__acts_as_image_holder_filedata[image.field] = filedata
+              @__acts_as_image_holder_filedata[image.original] = origdata if origdata
               thumbs.each do |thumb|
                 @__acts_as_image_holder_thumbsdata[thumb[0].field]  = thumb[1]
               end
               
               # presetting the filenames for the future files
               self[image.field] = FileProc.guess_file_name(options, file, image)
+              self[image.original] = FileProc.guess_original_file_name(options, file) if origdata
               image.thumbs.each do |thumb, i|
                 self[thumb.field] = FileProc.guess_thumb_file_name(options, file, thumb, i)
               end
@@ -64,6 +76,7 @@ module ActsAsImageHolder
             else
               # blobs direct assignment
               self[image.field] = filedata
+              self[image.original] = origdata
               thumbs.each do |thumb|
                 self[thumb[0].field] = thumb[1]
               end
@@ -94,6 +107,12 @@ module ActsAsImageHolder
       options.images.each do |image|
         define_method "#{image.field}_url" do 
           __file_url_for self[image.field] unless self[image.field].blank?
+        end
+        
+        if image.original
+          define_method "#{image.original}_url" do 
+            __file_url_for self[image.original] unless self[image.original].blank?
+          end
         end
         
         image.thumbs.each do |thumb|
@@ -131,6 +150,7 @@ module ActsAsImageHolder
       define_method :acts_as_image_holder_remove_files do 
         options.images.each do |image|
           FileProc.remove_file(options, self[image.field])
+          FileProc.remove_file(options, self[image.original]) if image.original
           image.thumbs.each do |thumb|
             FileProc.remove_file(options, self[thumb.field])
           end
