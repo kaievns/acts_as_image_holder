@@ -92,6 +92,8 @@ You can pass to the method the following options.
 
    :maximum_bytes - integer maximum size of the incomming images
 
+   :watermark - the watermarking options (see below)
+
 
 [*] Thumbnailing options
    :thumb_field  - the name of the field which will contain the thumb
@@ -106,6 +108,8 @@ You can pass to the method the following options.
                   be created in the given type
 
    :thumb_quality - the jpeg-thumbnails quality
+
+   :thumb_watermark - the thumbnail watermarking options (see below)
 
 
 [*] Shortified versions of the options
@@ -168,9 +172,8 @@ Watermarking
 ============
 
 With the plugin you can automatically put watermarks on your incomming
-images. You can use simple text, a file, or even a proc which will
-return the string which should be watermarked over the image. It might
-look like that
+images. You can use a simple text or a file which should be
+watermarked over the image. The definition might look like that
 
 class Image < ActiveRecord::Base
   acts_as_image_holder :field => 'full_version',
