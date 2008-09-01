@@ -52,10 +52,10 @@ Options
 You can pass to the method the following options.
 
 [*] Output directory options
-   :directory - relative to "#{RAILS_ROOT}/public/images" or an
+   :output_directory - relative to "#{RAILS_ROOT}/public/images" or an
                 absolute directory path.
 		       
-   :subdirs - a string which will be put in the
+   :subdirectories - a string which will be put in the
               Time.now.strftime method and will generate
               subdirectories inside the output-directory.
 
@@ -109,6 +109,9 @@ You can pass to the method the following options.
 
 
 [*] Shortified versions of the options
+   :directory  == :output_directory
+   :subdirs    == :subdirectories
+   
    :field      == :image_field
    :type_field == :image_type_field
    :original   == :original_field
