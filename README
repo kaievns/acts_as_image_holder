@@ -2,7 +2,7 @@ ActsAsImageHolder
 =================
 
 This plugin handles the work with image-fields, such as validation,
-resizing, files organizations etc.
+resizing, watermarking, files organizations etc.
 
 
 Example
@@ -46,6 +46,69 @@ Image.image = File.open('some/file/of/yours.jpg', 'rb')
 Sure you can put right there the user uploaded images, use mass
 assignment, etc. Everything will be handled automatically.
 
+Options
+=======
+
+You can pass to the method the following options.
+
+[*] Output directory options
+   :directory - relative to "#{RAILS_ROOT}/public/images" or an
+                absolute directory path.
+		       
+   :subdirs - a string which will be put in the
+              Time.now.strftime method and will generate
+              subdirectories inside the output-directory.
+
+   NOTE: if the output-directory is not specified, it assumes that you
+   want to save your images as blobs inside your database
+
+[*] Image specification options
+   :image_field - the name of the main image field in your record, by
+                  default is 'image'
+
+   :image_type_field - name of the field where you would like to track
+                 each image type. the system will put strings like
+                 'gif', 'png', 'jpeg' into the field when the image
+                 will be assigned
+		 
+   :original_field - if specified the original incomming image will be
+                 stored in here
+
+   :convert_to - :png/:gif/:jpeg - if specified all the incomming
+                 images will be converted to the sepcified type
+
+   :resize_to -  a string like '123x123' which meant width and height
+                 if specified all the incomming images will be
+                 proportionally resiezed to fit the given size.
+
+   :jpeg_quality - if you set the config to convert incomming images to
+                 jpegs, you can specify the jpeg-quality with the option
+
+   :allowed_types - list like [:png, :jpeg] if specified all the
+                 incomming images will get validated against the rule
+
+   :required    - boolean marke which shows if the image field should
+                  be treated as a required one during the validation
+
+   :maximum_bytes - integer maximum size of the incomming images
+
+
+[*] Thumbnailing options
+   :thumb_field  - the name of the field which will contain the thumb
+                  file name or the thumb-blob. if specified the thumbs
+                  will be generated automatically each time the main
+                  image field assigned
+
+   :thumb_size   - string like '123x123' which meant as width-height,
+                  if specified thumbs will be created to fit the size
+
+   :thumb_type   - :png/:gif/:jpeg - if specified all the thumbs will
+                  be created in the given type
+
+   :thumb_quality - the jpeg-thumbnails quality
+
+
+
 Several Images Processing
 =========================
 
@@ -71,65 +134,134 @@ class Image < ActiveRecord::Base
                        :outout_directory => 'uploaded'
 end
 
+Sure, each image can have several thumbnails if you like. You can use
+sort notation as well
+
+class Image < ActiveRecord::Base
+  acts_as_image_holder :image_field => 'full_size',
+                       :thumbs => [
+                         { :field => 'small_size',
+                           :size => '100x100',
+                           :type => :jpeg
+                         }, {
+                           :field => 'average_size',
+                           :size  => '200x200'
+                         }
+		       ]
+end
 
 
-Options
-=======
+Watermarking
+============
 
-You can pass to the method the following options.
+With the plugin you can automatically put watermarks on your incomming
+images. You can use simple text, a file, or even a proc which will
+return the string which should be watermarked over the image. It might
+look like that
 
-[*] Output directory options
-   :output_directory - relative to "#{RAILS_ROOT}/public/images" or an
-                       absolute directory path.
-		       
-   :subdirectories - a string which will be put in the
-                     Time.now.strftime method and will generate
-                     subdirectories inside the output-directory.
+class Image < ActiveRecord::Base
+  acts_as_image_holder :field => 'full_version',
+                       :watermark => {
+		          :text => "That's mine!",
+			  :font => {
+			    :size => 40,
+			    :family => "Arial",
+			    :weight => :bold
+			  },
+			  :color => 'red'
+		       }
+end
 
-   NOTE: if the output-directory is not specified, it assumes that you
-   want to save your images as blobs inside your database
+You can watermark the thumbnails as well if you like so.
 
-[*] Image specification options
-   :image_field - the name of the main image field in your record, by
-                  default is 'image'
+class Image < ActiveRecord::Base
+  acts_as_image_holder :field => 'full_version',
+                       :watermark => {...}
+                       :thumb_field => 'thumb',
+                       :thumb_watermark => {...}
 
-   :image_type_field - name of the field where you would like to track
-                 each image type. the system will put strings like
-                 'gif', 'png', 'jpeg' into the field when the image
-                 will be assigned
-
-   :convert_to - :png/:gif/:jpeg - if specified all the incomming
-                 images will be converted to the sepcified type
-
-   :resize_to -  a string like '123x123' which meant width and height
-                 if specified all the incomming images will be
-                 proportionally resiezed to fit the given size.
-
-   :jpeg_quality - if you set the config to convert incomming images to
-                 jpegs, you can specify the jpeg-quality with the option
-
-   :allowed_types - list like [:png, :jpeg] if specified all the
-                 incomming images will get validated against the rule
-
-   :required    - boolean marke which shows if the image field should
-                  be treated as a required one during the validation
-
-
-[*] Thumbnailing options
-   :thumb_field  - the name of the field which will contain the thumb
-                  file name or the thumb-blob. if specified the thumbs
-                  will be generated automatically each time the main
-                  image field assigned
-
-   :thumb_size   - string like '123x123' which meant as width-height,
-                  if specified thumbs will be created to fit the size
-
-   :thumb_type   - :png/:gif/:jpeg - if specified all the thumbs will
-                  be created in the given type
-
-   :thumb_quality - the jpeg-thumbnails quality
-   
+# or like that
+  acts_as_image_holder :field => 'full_version',
+                       :watermark => {...}
+                       :thumbs => [
+                         { :field => 'thumb',
+                           :watermark => {...}
+                         }
+                         .....
+                       ]
+end
 
 
+Watermarking Options
+====================
 
+:text - the text string for the watermark
+
+:font - the font definitions for the text watermark
+  :size - the font size in pixels
+  :family - the font family string "Arial"/"Helvetica"
+  :weight - the font weight name :bold/:bolder/:normal
+  :style  - the font style :italic/oblique
+  :stretch - the space between the chars
+
+:color - the text color, it can be in any standard format #FFF,
+         #FFFFFFF, string color name, rgb(), etc
+
+:stroke - if you want a stroked text, put the color in here
+
+:stroke_width - the stroke width in pixels, 1 pixel by default
+
+:undercolor - the background color for your text if you need
+  
+:text_align - the text align right/left/center
+
+:file - the name of an image-file or a file object which should be
+        placed over your image
+
+:position - where to put your text. There are several options
+            possible, but they are prettymuch standard. Use arrays
+            like [:top, :left], [:center, :right], [:bottom, :center],
+            or just :top, :left, :center, etc. Or some compas like
+            directions :south, :southeast, :north, etc.
+
+:offset - offset of your watermark from the image ages in pixels
+
+:rotate - integer degrees, how the watermark should be rotated
+          (clockwise)
+
+:shade - the shade effect options. And array like
+         [bool, int, int]
+
+:shadow - the shadow effect options. An array like
+         [left_offset=4, top_offset=4, blurrness=4, opacity=1]
+
+:shadow_color - the shadow effect color if you need so.
+
+
+
+Additional Methods
+==================
+
+In addition you will have several more options on your model which
+will help you to handle images inside of the model if need so
+
+If you use filestorage for your images, then for each image and
+thumbnail you will have a method named like "#{field_name}_url" which
+will return the url address of the image.
+
+Then you will have the following methods
+
+resize_file(File/String file_pointer, String size,
+            String format, Integer quality)
+
+resize_file(String blob, String size, String format, Integer quality)
+
+watermark_file(File/String file_pointer, Hash options)
+
+watermark_blob(String blob, Hash options)
+
+
+That's it. Enjoy!
+
+--
 Copyright (c) 2008 Nikolay V. Nemshilov, released under the MIT license
