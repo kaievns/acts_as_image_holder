@@ -108,7 +108,17 @@ You can pass to the method the following options.
    :thumb_quality - the jpeg-thumbnails quality
 
 
+[*] Shortified versions of options
+   :field      == :image_field
+   :type_field == :image_type_field
+   :original   == :original_field
+   :type       == :convert_to
+   :size       == :resize_to
+   :quality    == :jpeg_quality
+   
 
+
+ 
 Several Images Processing
 =========================
 
@@ -162,14 +172,14 @@ look like that
 class Image < ActiveRecord::Base
   acts_as_image_holder :field => 'full_version',
                        :watermark => {
-		          :text => "That's mine!",
-			  :font => {
-			    :size => 40,
-			    :family => "Arial",
-			    :weight => :bold
-			  },
-			  :color => 'red'
-		       }
+                          :text => "That's mine!",
+                          :font => {
+                            :size => 40,
+                            :family => "Arial",
+                            :weight => :bold
+                          },
+                          :color => 'red'
+                       }
 end
 
 You can watermark the thumbnails as well if you like so.
