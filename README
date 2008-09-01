@@ -8,7 +8,7 @@ resizing, watermarking, files organizations etc.
 Example
 =======
 
-A simple example mit be like that. A user unit which has a field
+A simple example might be like that. A user unit which has a field
 'avatar' which will contain a file-name of his avatar and all the
 avatars will be saved in the "#{RAILS_ROOT}/public/images/userpics"
 directory.
