@@ -2,7 +2,7 @@ require File.dirname(__FILE__)+"/../../../spec_helper.rb"
 
 describe ActsAsImageHolder::ImageProc::Watermarker do 
   before :all do 
-    @test_file_name = File.dirname(__FILE__) + "/../../../images/test.jpg"
+    @test_file_name = "#{$fixtures_dir}/test.jpg"
   end
   
   describe "watermarking with a text" do 
@@ -55,7 +55,7 @@ describe ActsAsImageHolder::ImageProc::Watermarker do
   describe "watermarking with an image" do 
     before :all do 
       @options = {
-        :file => File.dirname(__FILE__) + "/../../../images/test.gif",
+        :file => "#{$fixtures_dir}/test.gif",
         :position => [:bottom, :right],
         :offset => 10,
         :rotate => 90,

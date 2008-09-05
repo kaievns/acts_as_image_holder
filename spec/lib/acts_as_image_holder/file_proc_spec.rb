@@ -2,7 +2,7 @@ require File.dirname(__FILE__)+"/../../spec_helper"
 
 describe ActsAsImageHolder::FileProc do 
   before :each do 
-    @file = File.open(File.dirname(__FILE__)+"/../../images/test.jpg", 'rb')
+    @file = File.open("#{$fixtures_dir}/test.jpg", 'rb')
     @options = ActsAsImageHolder::Options.new(:directory => "/tmp/images/spec",
                                               :subdirs => "%Y-%m")
   end

@@ -1,8 +1,8 @@
 require 'active_record'
 
-class CreateBlobbedImagesTable < ActiveRecord::Migration
+class CreateImageWithBlobsTable < ActiveRecord::Migration
   def self.up
-    create_table "blobbed_images", :force => true do |t|
+    create_table "image_with_blobs", :force => true do |t|
       t.binary :image
       t.binary :image_type
       t.binary :image_thumb
@@ -10,6 +10,6 @@ class CreateBlobbedImagesTable < ActiveRecord::Migration
   end
   
   def self.down
-    drop_table "blobbed_images"
+    drop_table "image_with_blobs"
   end
 end
