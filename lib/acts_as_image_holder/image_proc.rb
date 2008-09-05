@@ -22,11 +22,12 @@ class ActsAsImageHolder::ImageProc
     
     # resizes the given file
     def resize(file, size, format=nil, quality=nil)
-      size = size.split('x').collect{ |v| v.to_i} if size.is_a? String
-      
       image = image_from(file)
       
-      image.resize_to_fit! *size if size
+      image.change_geometry!(size){ |cols, rows, img|
+        img.resize!(cols, rows)
+      } if size and size != ""
+      
       image.format = format.to_s if format
       
       image.to_blob { self.quality = quality if quality }
@@ -62,6 +63,17 @@ class ActsAsImageHolder::ImageProc
       end
       
       Magick::Image.from_blob(data).first
+    end
+    
+    # parses out the size options
+    # returns a list like [width, height, resize-type]
+    def parse_size_options(str)
+      if match = str.match(/(\d*)(x*)(\d*)(\!|>)/)
+        [match[1].to_i, match[3].to_i,
+         match[4]==">" ? :zoom : (match[4]=="!" ? :exact : :usual)]
+      else
+        [0, 0, :usual]
+      end
     end
   end
 end

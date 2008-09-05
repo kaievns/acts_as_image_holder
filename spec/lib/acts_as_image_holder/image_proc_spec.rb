@@ -32,4 +32,28 @@ describe ActsAsImageHolder::ImageProc do
       ActsAsImageHolder::ImageProc.get_type(@file).should == :jpeg
     end
   end
+  
+  describe "resize to bigger than it is" do 
+    before :each do 
+      @data = ActsAsImageHolder::ImageProc.resize(@file, "800x600>")
+      @image = Magick::Image.from_blob(@data).first
+    end
+    
+    it "should keep the original size" do 
+      @image.columns.should == 400
+      @image.rows.should == 300
+    end
+  end
+  
+  describe "resize to specific aspect ratio" do 
+    before :each do 
+      @data = ActsAsImageHolder::ImageProc.resize(@file, "600x600!")
+      @image = Magick::Image.from_blob(@data).first
+    end
+    
+    it "should keep the original size" do 
+      @image.columns.should == 600
+      @image.rows.should == 600
+    end
+  end
 end
