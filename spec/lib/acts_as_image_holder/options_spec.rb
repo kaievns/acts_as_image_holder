@@ -68,7 +68,7 @@ describe ActsAsImageHolder::Options do
       end
       
       it "should set the size" do 
-        @f.size.should == [400, 300]
+        @f.size.should == "400x300"
       end
       
       it "should apply the type" do 
@@ -101,7 +101,7 @@ describe ActsAsImageHolder::Options do
         end
       
         it "should have the size" do 
-          @thumb.size.should == [40, 30]
+          @thumb.size.should == "40x30"
         end
       end
     end
