@@ -62,8 +62,8 @@ protected
         @offset   ||= 10
       end
       
-      def [](key)
-        send(key)
+      def [](name)
+        instance_variable_get("@#{name}")
       end
     end
   end
