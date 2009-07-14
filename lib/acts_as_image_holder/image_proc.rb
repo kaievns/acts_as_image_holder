@@ -55,6 +55,7 @@ class ActsAsImageHolder::ImageProc
     def image_from(src)
       if src.is_a?(ActionController::UploadedStringIO) or 
           src.is_a?(ActionController::UploadedTempfile) or
+          src.is_a?(Tempfile) or
           src.is_a?(File)
         src.rewind
         data = src.read
