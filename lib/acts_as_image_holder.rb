@@ -127,7 +127,7 @@ module ActsAsImageHolder
       
       # writting down the files
       define_method :acts_as_image_holder_write_files do 
-        [@__acts_as_image_holder_filedata, @__acts_as_image_holder_thumbsdata].each do |data_collection|
+        [@__acts_as_image_holder_filedata || {}, @__acts_as_image_holder_thumbsdata || {}].each do |data_collection|
           data_collection.each do |field_name, filedata|
             FileProc.write_file(options, self[field_name], filedata)
           end
