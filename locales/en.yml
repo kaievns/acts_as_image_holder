@@ -1,0 +1,7 @@
+en:
+  activerecord:
+    errors:
+      messages:
+        is_required:     is required
+        is_not_an_image: is not an image
+        has_wrong_type:  has wrong type

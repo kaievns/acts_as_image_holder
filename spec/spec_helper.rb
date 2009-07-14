@@ -1,5 +1,11 @@
 require 'spec'
 require 'active_record'
+require 'tempfile'
+
+if defined? I18n
+  I18n.load_path << Dir[ File.join(File.dirname(__FILE__), '..', 'locales', '*.{rb,yml}') ]
+end
+
 
 unless defined? ActsAsImageHolder
   require File.dirname(__FILE__)+"/../lib/acts_as_image_holder"

@@ -18,11 +18,11 @@ module ActsAsImageHolder
     validates_each options.images.collect(&:field) do |record, attr, value|
       record.instance_eval do 
         if @__acts_as_image_holder_problems and !@__acts_as_image_holder_problems.blank?
-          self.errors.add attr, "is not an image" if @__acts_as_image_holder_problems[attr] == :not_an_image
-          self.errors.add attr, "has wrong type"  if @__acts_as_image_holder_problems[attr] == :wrong_type
+          self.errors.add attr, (defined?(I18n) ? :is_not_an_image : "is not an image") if @__acts_as_image_holder_problems[attr] == :not_an_image
+          self.errors.add attr, (defined?(I18n) ? :has_wrong_type : "has wrong type")   if @__acts_as_image_holder_problems[attr] == :wrong_type
         
         elsif options.images.find{ |i| i.field == attr }.required and self[attr].blank?
-          self.errors.add attr, "is required"
+          self.errors.add attr, (defined?(I18n) ? :is_required : "is required")
         end
       end
     end

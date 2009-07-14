@@ -1,0 +1,7 @@
+ru:
+  activerecord:
+    errors:
+      messages:
+        is_required:     обязательно
+        is_not_an_image: не является изображением
+        has_wrong_type:  имеет неподдерживаемый тип
