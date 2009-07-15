@@ -112,7 +112,7 @@ module ActsAsImageHolder
       
       # common file-urls compiler
       define_method "__file_url_for" do |relative_filename|
-        full_filename = options.directory +"/"+ relative_filename
+        full_filename = "#{options.directory}/#{relative_filename}"
         public_dir = "#{RAILS_ROOT}/public"
         
         full_filename[public_dir.size, full_filename.size]
